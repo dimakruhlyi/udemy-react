@@ -1,110 +1,139 @@
-import React from 'react';
-import classes from './QuizCreator.module.css';
-import Button from '../../components/UI/Button/Button';
-import Input from '../../components/UI/Input/Input';
-import Select from '../../components/UI/Select/Select';
-import {createControl} from '../../form/formFramework';
-import Auxiliary from '../../hoc/Auxiliary/Auxiliary';
+import React, {Component} from 'react'
+import classes from './QuizCreator.module.css'
+import Button from '../../components/UI/Button/Button'
+import Input from '../../components/UI/Input/Input'
+import Select from '../../components/UI/Select/Select'
+import {createControl, validate, validateForm} from '../../form/formFramework'
+import Auxiliary from '../../hoc/Auxiliary/Auxiliary'
 
-function createOptionControl(number){
-    return createControl({
-        label: `Answer ${number}`,
-        errorMessage:'Value cann\'t be empty',
-        id: number
-    }, {required: true })
+function createOptionControl(number) {
+  return createControl({
+    label: `Variant ${number}`,
+    errorMessage: 'Значение не может быть пустым',
+    id: number
+  }, {required: true})
 }
 
-function createFormControls(){
-    return {
-        question: createControl({
-            label: 'Input question',
-            errorMessage: 'Question cann\'t be empty'
-        }, { required: true }),
-        option1: createOptionControl(1),
-        option2: createOptionControl(2),
-        option3: createOptionControl(3),
-        option4: createOptionControl(4),
-    }
+function createFormControls() {
+  return {
+    question: createControl({
+      label: 'Choose question',
+      errorMessage: 'Question cann\'t be empty!'
+    }, {required: true}),
+    option1: createOptionControl(1),
+    option2: createOptionControl(2),
+    option3: createOptionControl(3),
+    option4: createOptionControl(4)
+  }
 }
 
-export default class QuizCreator extends React.Component {
+export default class QuizCreator extends Component {
 
-    state = {
-        quiz: [],
-        fromControls: createFormControls(),
-        righAnswerId: 1
-    }
+  state = {
+    quiz: [],
+    isFormValid: false,
+    rightAnswerId: 1,
+    formControls: createFormControls()
+  }
 
-    submitHandler = event => {
-        event.preventDefault();
-    }
+  sibmitHandler = event => {
+    event.preventDefault()
+  }
 
-    addQuestionHandler = () =>{
+  addQuestionHandler = event => {
+    event.preventDefault()
+  }
 
-    }
+  createQuizHandler = () => {
 
-    createQuizHandler = () =>{
+  }
 
-    }
+  changeHandler = (value, controlName) => {
+    const formControls = { ...this.state.formControls }
+    const control = { ...formControls[controlName] }
 
-    changeHandler = (value, controlName) => {
+    control.touched = true
+    control.value = value
+    control.valid = validate(control.value, control.validation)
 
-    }
+    formControls[controlName] = control
 
-    renderControls(){
-        return Object.keys(this.state.fromControls).map((controlName, index) => {
-            const control = this.state.fromControls[controlName];
-            return(
-                <Auxiliary key = {controlName + index}> 
-                     <Input 
-                        label = {control.label}
-                        value = {control.value}
-                        valid = {control.valid}
-                        shouldValidate = {!!control.validation}
-                        touched = {control.touched}
-                        errorMessage = {control.errorMessage}
-                        onChange = {event => {
-                            this.changeHandler(event.target.value, controlName)
-                        }}
-                    />
-                    {index === 0 ? <hr /> : null}
-                </Auxiliary>  
-            )
-        })
-    }
+    this.setState({
+      formControls,
+      isFormValid: validateForm(formControls)
+    })
+  }
 
-    selectChangeHandler = event => {
-        this.setState({
-            righAnswerId: +event.target.value
-        })
-    }
+  renderControls() {
+    return Object.keys(this.state.formControls).map((controlName, index) => {
+      const control = this.state.formControls[controlName]
 
-    render(){
-        const select = <Select 
-            label = "Choose correct answer"
-            value = {this.state.righAnswerId}
-            onChange = {this.selectChangeHandler}
-            options = {[
-                {text: 1, value: 1},
-                {text: 2, value: 2},
-                {text: 3, value: 3},
-                {text: 4, value: 4}
-            ]}
-        />
+      return (
+        <Auxiliary key={controlName + index}>
+          <Input
+            label={control.label}
+            value={control.value}
+            valid={control.valid}
+            shouldValidate={!!control.validation}
+            touched={control.touched}
+            errorMessage={control.errorMessage}
+            onChange={event => this.changeHandler(event.target.value, controlName)}
+          />
+          { index === 0 ? <hr /> : null }
+        </Auxiliary>
+      )
+    })
+  }
 
-        return(
-            <div className = {classes.QuizCreator}>
-                <div>
-                    <h1>Create test</h1>
-                    <form onSubmit = {this.submitHandler}>
-                        {this.renderControls()}
+  selectChangeHandler = event => {
+    this.setState({
+      rightAnswerId: +event.target.value
+    })
+  }
 
-                        {select}
-                        <Button type = 'primary' onClick = {this.addQuestionHandler}>Add question</Button>
-                        <Button type = 'success' onClick = {this.createQuizHandler}>Create test</Button>
-                    </form>
-                </div>
-            </div>
-        )
-    }
+  render() {
+    const select = <Select
+      label="Choose correct answer"
+      value={this.state.rightAnswerId}
+      onChange={this.selectChangeHandler}
+      options={[
+        {text: 1, value: 1},
+        {text: 2, value: 2},
+        {text: 3, value: 3},
+        {text: 4, value: 4}
+      ]}
+    />
+
+    return (
+      <div className={classes.QuizCreator}>
+        <div>
+          <h1>Создание теста</h1>
+
+          <form onSubmit={this.submitHandler}>
+
+            { this.renderControls() }
+
+            { select }
+
+            <Button
+              type="primary"
+              onClick={this.addQuestionHandler}
+              disabled={!this.state.isFormValid}
+            >
+              Add question
+            </Button>
+
+            <Button
+              type="success"
+              onClick={this.createQuizHandler}
+              disabled={this.state.quiz.length === 0}
+            >
+              Create test
+            </Button>
+
+          </form>
+        </div>
+      </div>
+    )
+  }
 }
