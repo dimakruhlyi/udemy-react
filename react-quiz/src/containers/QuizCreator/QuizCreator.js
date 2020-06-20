@@ -9,7 +9,7 @@ import Auxiliary from '../../hoc/Auxiliary/Auxiliary'
 function createOptionControl(number) {
   return createControl({
     label: `Variant ${number}`,
-    errorMessage: 'Значение не может быть пустым',
+    errorMessage: 'Value cann\'t be empty',
     id: number
   }, {required: true})
 }
@@ -41,11 +41,38 @@ export default class QuizCreator extends Component {
   }
 
   addQuestionHandler = event => {
-    event.preventDefault()
+    event.preventDefault();
+
+    const quiz = this.state.quiz.concat();
+    const index = quiz.length + 1;
+
+    const {question, option1, option2, option3, option4} = this.state.formControls;
+
+    const questionItem = {
+      question: question.value,
+      id: index,
+      rightAnswrId: this.state.rightAnswerId,
+      answers: [
+        { test: option1.value, id: option1.id },
+        { test: option2.value, id: option2.id },
+        { test: option3.value, id: option3.id },
+        { test: option4.value, id: option4.id }
+      ]
+    }
+
+    quiz.push(questionItem);
+    this.setState({
+      quiz,
+      isFormValid: false,
+      rightAnswerId: 1,
+      formControls: createFormControls()
+    })
   }
 
-  createQuizHandler = () => {
+  createQuizHandler = event => {
+    event.preventDefault();
 
+    console.log(this.state.quiz);
   }
 
   changeHandler = (value, controlName) => {
@@ -107,7 +134,7 @@ export default class QuizCreator extends Component {
     return (
       <div className={classes.QuizCreator}>
         <div>
-          <h1>Создание теста</h1>
+          <h1>Creating test</h1>
 
           <form onSubmit={this.submitHandler}>
 
