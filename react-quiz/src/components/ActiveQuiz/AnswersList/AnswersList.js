@@ -10,9 +10,11 @@ const AnswersList = props => {
                     <AnswerItem  answers = {answers} key = {index}
                     onAnswerClick = {props.onAnswerClick}
                     state = {props.state ? props.state[answers.id] : null}/>
+                    
                 )
             })}
         </ul>
     )
+   
 }
 export default AnswersList
