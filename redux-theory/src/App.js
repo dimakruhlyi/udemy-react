@@ -15,13 +15,13 @@ class App extends Component {
   render() {
     return (
       <div className={'App'}>
-        <h1>Счетчик <strong>{this.state.counter}</strong></h1>
+        <h1>Counter <strong>{this.state.counter}</strong></h1>
 
         <hr/>
 
         <div className="Actions">
-          <button onClick={() => this.updateCounter(1)}>Добавить 1</button>
-          <button onClick={() => this.updateCounter(-1)}>Вычесть 1</button>
+          <button onClick={() => this.updateCounter(1)}>Add 1</button>
+          <button onClick={() => this.updateCounter(-1)}>Sub 1</button>
         </div>
       </div>
     )
