@@ -5,11 +5,12 @@ import './index.css';
 const starWarsChars = [
   {name: 'Dart Weider', side: 'dark'},
   {name: 'Luke Skywalker', side: 'light'},
+  {name: 'Yoda', side: 'light'},
   {name: 'Palpatine', side: 'dark'},
   {name: 'Obi-Wan Kenobi', side: 'light'}
 ];
 
-const App = ({list}) => {
+export const App = ({list}) => {
     return(
       <div>
         {list.map((char, index) => {
@@ -26,6 +27,6 @@ const withFilteredProps = Component => ({list, side}) => {
   return <Component list = {filteredList}/>;
 }
 
-const FilteredList = withFilteredProps(App)
+export const FilteredList = withFilteredProps(App)
 
 ReactDOM.render(<FilteredList list = {starWarsChars} side = "light"/>, document.getElementById('root'))
